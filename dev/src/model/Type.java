@@ -10,4 +10,5 @@ package model;
 public enum Type {
     PLAYER,
     CRATE
+
 }
