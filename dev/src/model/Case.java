@@ -3,21 +3,49 @@ package model;
 /**
  * Case's class
  *
- * @see State
- *
  * @author GARCIA Romain, DE OLIVEIRA Dylan, NGUYEN Michaël, VINCIGUERRA Antoine
- * @version 2018-01-30
+ * @version 2018-02-04
+ * @see State
+ * @see Pawn
  */
 
 public class Case {
-    private State state = State.WALL;
+	private State state;
+	private Pawn pawn;
 
-    public State getState() {
-        return state;
-    }
+	Case(State state) {
+		this.state = state;
+		this.pawn = null;
+	}
 
-    public void setState(State state) {
-        this.state = state;
-    }
+	public void addPawn(Pawn pawn) {
+		this.pawn = pawn;
+	}
 
+	public void removePawn() {
+		this.pawn = null;
+	}
+
+	private State getState() {
+		return state;
+	}
+
+	@Override
+	public String toString() {
+		if (pawn != null) {
+			if (pawn.getType() == Type.PLAYER)
+				return "@";
+			else
+				return "$";
+		}
+		switch (getState()) {
+			case WALL:
+				return "#";
+			case EMPTY:
+				return " ";
+			case TARGET:
+				return ".";
+		}
+		return null;
+	}
 }

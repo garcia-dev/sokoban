@@ -11,5 +11,4 @@ public enum State {
     EMPTY,
     WALL,
     TARGET
-
 }
