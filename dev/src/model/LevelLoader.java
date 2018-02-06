@@ -23,7 +23,7 @@ import java.util.stream.Stream;
  */
 
 public class LevelLoader {
-	public static Case[][] loadFile(String fileName) {
+	public static Case[][] loadFile(String fileName, Board board) {
 		String workingDirectory = System.getProperty("user.dir");
 
 		if (System.getProperty("os.name").toLowerCase().contains("win"))
@@ -33,7 +33,7 @@ public class LevelLoader {
 
 		System.out.println(absoluteFilePath);
 
-		/*List<String> lines = new ArrayList<>();
+		List<String> lines = new ArrayList<>();
 
 		try (Stream<String> stream = Files.lines(Paths.get(absoluteFilePath))) {
 			lines = stream.collect(Collectors.toList());
@@ -49,30 +49,31 @@ public class LevelLoader {
 			for (int col = 0; col < lines.get(row).length(); col++) {
 				switch (lines.get(row).charAt(col)) {
 					case ' ': // if the char represents an empty case
-						cases[row][col] = new Case(State.EMPTY);
+						cases[row][col] = new Case(State.EMPTY, new int[]{row, col}, board);
 						break;
 					case '#': // if the char represents a wall
-						cases[row][col] = new Case(State.WALL);
+						cases[row][col] = new Case(State.WALL, new int[]{row, col}, board);
 						break;
 					case '.': // if the char represents a target case
-						cases[row][col] = new Case(State.TARGET);
+						cases[row][col] = new Case(State.TARGET, new int[]{row, col}, board);
 						break;
 					case '@': // if the char represents a player
-						Case playerCase = new Case(State.EMPTY);
-						Pawn playerPawn = new Pawn(Type.PLAYER, playerCase);
+						System.out.println(row + "-" + col);
+						Case playerCase = new Case(State.EMPTY, new int[]{row, col}, board);
+						Pawn playerPawn = new Pawn(Type.PLAYER, playerCase, board);
 						playerCase.addPawn(playerPawn);
 						cases[row][col] = playerCase;
 						break;
 					case '$': // if the char represents a crate
-						Case crateCase = new Case(State.EMPTY);
-						Pawn cratePawn = new Pawn(Type.CRATE, crateCase);
+						Case crateCase = new Case(State.EMPTY, new int[]{row, col}, board);
+						Pawn cratePawn = new Pawn(Type.CRATE, crateCase, board);
 						crateCase.addPawn(cratePawn);
 						cases[row][col] = crateCase;
 						break;
 				}
 			}
-		}*/
+		}
 
-		return null;
+		return cases;
 	}
 }

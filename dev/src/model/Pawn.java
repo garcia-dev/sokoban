@@ -14,18 +14,41 @@ package model;
 
 public class Pawn {
 	private Type type;
-	private Case coord;
+	private Case aCase;
+	private Board board;
 
-	Pawn(Type type, Case coord) {
+	public Pawn(Type type, Case aCase, Board board) {
 		this.type = type;
-		this.coord = coord;
+		this.aCase = aCase;
+		this.board = board;
 	}
 
 	public Type getType() {
 		return type;
 	}
 
-	public Case getCoord() {
-		return coord;
+	public Case getCase() {
+		return aCase;
+	}
+
+	public void move(Direction direction){
+		switch (direction){
+			case UP:
+				aCase.removePawn();
+				board.getLevel().getCaseArray()[aCase.getCoord()[0] - 1][aCase.getCoord()[1]].addPawn(this);
+				break;
+			case DOWN:
+				aCase.removePawn();
+				board.getLevel().getCaseArray()[aCase.getCoord()[0] + 1][aCase.getCoord()[1]].addPawn(this);
+				break;
+			case LEFT:
+				aCase.removePawn();
+				board.getLevel().getCaseArray()[aCase.getCoord()[0]][aCase.getCoord()[1] - 1].addPawn(this);
+				break;
+			case RIGHT:
+				aCase.removePawn();
+				board.getLevel().getCaseArray()[aCase.getCoord()[0]][aCase.getCoord()[1] + 1].addPawn(this);
+				break;
+		}
 	}
 }

@@ -24,8 +24,8 @@ public class Level {
 		return caseArray;
 	}
 
-	public void loadLevel(String filePath) {
-		caseArray = LevelLoader.loadFile(filePath);
+	public void loadLevel(String filePath, Board board) {
+		caseArray = LevelLoader.loadFile(filePath, board);
 	}
 
 	@Override
