@@ -12,9 +12,14 @@ package model;
 public class Case {
 	private State state;
 	private Pawn pawn;
+	private Board board;
+	private int[] coord;
 
-	Case(State state) {
+	Case(State state, int[] coord, Board board) {
 		this.state = state;
+		this.board = board;
+		this.coord = coord;
+
 		this.pawn = null;
 	}
 
@@ -28,6 +33,14 @@ public class Case {
 
 	private State getState() {
 		return state;
+	}
+
+	public int[] getCoord() {
+		return coord;
+	}
+
+	public Pawn getPawn() {
+		return pawn;
 	}
 
 	@Override
