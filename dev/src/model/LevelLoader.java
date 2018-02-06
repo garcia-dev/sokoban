@@ -25,9 +25,15 @@ import java.util.stream.Stream;
 public class LevelLoader {
 	public static Case[][] loadFile(String fileName) {
 		String workingDirectory = System.getProperty("user.dir");
+
+		if (System.getProperty("os.name").toLowerCase().contains("win"))
+			workingDirectory += File.separator + "dev";
+
 		String absoluteFilePath = workingDirectory + File.separator + "resources" + File.separator + "levels" + File.separator + fileName + ".sok";
 
-		List<String> lines = new ArrayList<>();
+		System.out.println(absoluteFilePath);
+
+		/*List<String> lines = new ArrayList<>();
 
 		try (Stream<String> stream = Files.lines(Paths.get(absoluteFilePath))) {
 			lines = stream.collect(Collectors.toList());
@@ -65,8 +71,8 @@ public class LevelLoader {
 						break;
 				}
 			}
-		}
+		}*/
 
-		return cases;
+		return null;
 	}
 }
