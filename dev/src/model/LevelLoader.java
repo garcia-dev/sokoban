@@ -1,5 +1,6 @@
 package model;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -22,10 +23,13 @@ import java.util.stream.Stream;
  */
 
 public class LevelLoader {
-	public static Case[][] loadFile(String filePath) {
+	public static Case[][] loadFile(String fileName) {
+		String workingDirectory = System.getProperty("user.dir");
+		String absoluteFilePath = workingDirectory + File.separator + "resources" + File.separator + "levels" + File.separator + fileName + ".sok";
+
 		List<String> lines = new ArrayList<>();
 
-		try (Stream<String> stream = Files.lines(Paths.get(filePath))) {
+		try (Stream<String> stream = Files.lines(Paths.get(absoluteFilePath))) {
 			lines = stream.collect(Collectors.toList());
 		} catch (IOException e) {
 			e.printStackTrace();

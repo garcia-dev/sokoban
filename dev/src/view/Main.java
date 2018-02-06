@@ -12,7 +12,7 @@ import model.Level;
 public class Main {
 	public static void main(String[] args){
 		Level test = new Level(false);
-		test.loadLevel("resources/levels/level1.sok");
+		test.loadLevel("level1");
 
 		System.out.println(test);
 	}
