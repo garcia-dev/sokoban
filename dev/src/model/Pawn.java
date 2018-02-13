@@ -31,23 +31,31 @@ public class Pawn {
 		return aCase;
 	}
 
-	public void move(Direction direction){
-		switch (direction){
+	private void setaCase(Case aCase) {
+		this.aCase = aCase;
+	}
+
+	public void move(Direction direction) {
+		switch (direction) {
 			case UP:
 				aCase.removePawn();
 				board.getLevel().getCaseArray()[aCase.getCoord()[0] - 1][aCase.getCoord()[1]].addPawn(this);
+				setaCase(board.getLevel().getCaseArray()[aCase.getCoord()[0] - 1][aCase.getCoord()[1]]);
 				break;
 			case DOWN:
 				aCase.removePawn();
 				board.getLevel().getCaseArray()[aCase.getCoord()[0] + 1][aCase.getCoord()[1]].addPawn(this);
+				setaCase(board.getLevel().getCaseArray()[aCase.getCoord()[0] + 1][aCase.getCoord()[1]]);
 				break;
 			case LEFT:
 				aCase.removePawn();
 				board.getLevel().getCaseArray()[aCase.getCoord()[0]][aCase.getCoord()[1] - 1].addPawn(this);
+				setaCase(board.getLevel().getCaseArray()[aCase.getCoord()[0]][aCase.getCoord()[1] - 1]);
 				break;
 			case RIGHT:
 				aCase.removePawn();
 				board.getLevel().getCaseArray()[aCase.getCoord()[0]][aCase.getCoord()[1] + 1].addPawn(this);
+				setaCase(board.getLevel().getCaseArray()[aCase.getCoord()[0]][aCase.getCoord()[1] + 1]);
 				break;
 		}
 	}

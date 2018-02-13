@@ -31,7 +31,7 @@ public class Case {
 		this.pawn = null;
 	}
 
-	private State getState() {
+	public State getState() {
 		return state;
 	}
 

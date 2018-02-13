@@ -1,5 +1,8 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Level's class
  *
@@ -11,6 +14,7 @@ package model;
 public class Level {
 	private boolean isLocked;
 	private Case[][] caseArray;
+	private List<Case> targetArray;
 
 	public Level(boolean isLocked) {
 		this.isLocked = isLocked;
@@ -26,6 +30,22 @@ public class Level {
 
 	public void loadLevel(String filePath, Board board) {
 		caseArray = LevelLoader.loadFile(filePath, board);
+		targetArray = new ArrayList<>();
+
+		for (Case[] line : caseArray)
+			for(Case case1 : line)
+				if (case1.getState() == State.TARGET)
+					targetArray.add(case1);
+	}
+
+	public boolean isFinished(){
+		int crateOnTarget = 0;
+
+		for (Case case1 : targetArray)
+			if (case1.getPawn() != null && case1.getPawn().getType() == Type.CRATE)
+				crateOnTarget++;
+
+		return crateOnTarget == targetArray.size();
 	}
 
 	@Override
