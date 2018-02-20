@@ -7,7 +7,8 @@ package controller;
  * </p>
  *
  * @author GARCIA Romain, DE OLIVEIRA Dylan, NGUYEN Michaël, VINCIGUERRA Antoine
- * @version 2018-13-02
+ * @version 2018-02-13
+ * @see model.Board
  */
 
 import model.*;

@@ -23,15 +23,13 @@ import java.util.stream.Stream;
  */
 
 public class LevelLoader {
-	public static Case[][] loadFile(String fileName, Board board) {
+	public static Level loadFile(String fileName, Board board) {
 		String workingDirectory = System.getProperty("user.dir");
 
 		if (System.getProperty("os.name").toLowerCase().contains("win"))
 			workingDirectory += File.separator + "dev";
 
 		String absoluteFilePath = workingDirectory + File.separator + "resources" + File.separator + "levels" + File.separator + fileName + ".sok";
-
-		System.out.println(absoluteFilePath);
 
 		List<String> lines = new ArrayList<>();
 
@@ -46,7 +44,7 @@ public class LevelLoader {
 		for (int row = 0; row < lines.size(); row++) {
 			cases[row] = new Case[lines.get(row).length()];
 
-			for (int col = 0; col < lines.get(row).length(); col++) {
+			for (int col = 0; col < lines.get(row).length(); col++)
 				switch (lines.get(row).charAt(col)) {
 					case ' ': // if the char represents an empty case
 						cases[row][col] = new Case(State.EMPTY, new int[]{row, col}, board);
@@ -58,7 +56,6 @@ public class LevelLoader {
 						cases[row][col] = new Case(State.TARGET, new int[]{row, col}, board);
 						break;
 					case '@': // if the char represents a player
-						System.out.println(row + "-" + col);
 						Case playerCase = new Case(State.EMPTY, new int[]{row, col}, board);
 						Pawn playerPawn = new Pawn(Type.PLAYER, playerCase, board);
 						playerCase.addPawn(playerPawn);
@@ -71,9 +68,8 @@ public class LevelLoader {
 						cases[row][col] = crateCase;
 						break;
 				}
-			}
 		}
 
-		return cases;
+		return new Level(cases);
 	}
 }

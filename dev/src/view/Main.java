@@ -4,7 +4,9 @@ package view;
  * Main's class
  *
  * @author GARCIA Romain, DE OLIVEIRA Dylan, NGUYEN Michaël, VINCIGUERRA Antoine
- * @version 2018-01-30
+ * @version 2018-02-20
+ * @see model.Board
+ * @see controller.GameController
  */
 
 import controller.GameController;
@@ -12,55 +14,51 @@ import model.*;
 
 import java.util.Scanner;
 
-public class Main {
-	private static Case selectPlayerCase(Case[][] cases) {
-		for (int row = 0; row < cases.length - 1; row++) {
-			for (int col = 0; col < cases[row].length - 1; col++) {
-				if (cases[row][col].getPawn() != null && cases[row][col].getPawn().getType() == Type.PLAYER)
-					return cases[row][col];
-			}
-		}
 
-		return null;
+public class Main implements Observer {
+	private Board board;
+
+	private Main(Board board) {
+		this.board = board;
+	}
+
+	@Override
+	public void update(Object source) {
+		System.out.println(board.getLevel());
+		System.out.println(board.getLevel().getScore().getStepCount());
 	}
 
 	public static void main(String[] args) {
-		Level test = new Level(false);
-		Board board = new Board(test);
+		Main main = new Main(new Board());
 
-		test.loadLevel("level1", board);
+		main.board.setLevel(LevelLoader.loadFile("level1", main.board));
+		main.board.addObserver(main);
 
-		System.out.println(test);
+		GameController gameController = new GameController(main.board);
 
-		Case[][] cases = test.getCaseArray();
+		System.out.println(main.board.getLevel());
 
-		GameController gameController = new GameController(board);
-
-		while (!board.getLevel().isFinished()) {
-			Case playerCase = selectPlayerCase(cases);
-
+		while (!main.board.getLevel().isFinished()){
 			Scanner scanner = new Scanner(System.in);
-			System.out.println("Direction ?");
-			String input = scanner.next();
+			System.out.println("Direction :");
 
-			if (playerCase != null) {
-				switch (input) {
-					case "UP":
-						gameController.move(playerCase.getPawn(), Direction.UP);
-						break;
-					case "RIGHT":
-						gameController.move(playerCase.getPawn(), Direction.RIGHT);
-						break;
-					case "DOWN":
-						gameController.move(playerCase.getPawn(), Direction.DOWN);
-						break;
-					case "LEFT":
-						gameController.move(playerCase.getPawn(), Direction.LEFT);
-						break;
-				}
+			switch (scanner.next()){
+				case "UP":
+					gameController.move(main.board.getLevel().getPlayerCase().getPawn(), Direction.UP);
+					break;
+				case "RIGHT":
+					gameController.move(main.board.getLevel().getPlayerCase().getPawn(), Direction.RIGHT);
+					break;
+				case "DOWN":
+					gameController.move(main.board.getLevel().getPlayerCase().getPawn(), Direction.DOWN);
+					break;
+				case "LEFT":
+					gameController.move(main.board.getLevel().getPlayerCase().getPawn(), Direction.LEFT);
+					break;
+				default:
+					System.out.println("Not a direction");
+					break;
 			}
-
-			System.out.println(test);
 		}
 	}
 }

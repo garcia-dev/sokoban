@@ -1,10 +1,11 @@
 package model;
 
-public class Board {
-	Level level;
+public class Board extends AbstractModel {
+	private Level level;
 
-	public Board(Level level) {
+	public void setLevel(Level level) {
 		this.level = level;
+		level.setStartDate();
 	}
 
 	public Level getLevel() {

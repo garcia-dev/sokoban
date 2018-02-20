@@ -1,19 +1,22 @@
 package model;
 
-public class Score {
+import java.time.Duration;
+import java.time.LocalDateTime;
 
+public class Score extends AbstractModel {
     private String playerName;
     private int score;
     private int stepCount;
     private double gameLength;
     private int triesCount;
+    private Duration duration;
 
     public Score(){
-        this.playerName = "";
-        this.score = 0;
-        this.stepCount = 0;
-        this.gameLength = 0;
-        this.triesCount = 0;
+        playerName = "";
+        score = 0;
+        stepCount = 0;
+        gameLength = 0;
+        triesCount = 0;
     }
 
     public String getPlayerName() {
@@ -40,4 +43,15 @@ public class Score {
         this.playerName = playerName;
     }
 
+    public void addStepCount(){
+        stepCount++;
+    }
+
+    public Duration getDuration(){
+    	return duration;
+    }
+
+    public void setDuration(LocalDateTime startDate, LocalDateTime endDate){
+    	duration = Duration.between(startDate, endDate);
+    }
 }
