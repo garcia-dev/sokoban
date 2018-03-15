@@ -9,7 +9,6 @@ package view;
  * @author GARCIA Romain, DE OLIVEIRA Dylan, NGUYEN Michaël, VINCIGUERRA Antoine
  * @version 2018-02-04
  */
-
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -19,11 +18,13 @@ import javafx.stage.Stage;
 import model.*;
 import controller.GameController;
 
+import static model.Direction.*;
+
 public class ihm extends Application{
 
     public Group groupe;
 
-    public Scene scene;
+    private Scene scene;
 
     public ihm(){
         this.groupe = new Group();
@@ -31,7 +32,7 @@ public class ihm extends Application{
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
 
         Plateau plateau = new Plateau(new Board(),this);
         plateau.getBoard().setLevel(LevelLoader.loadFile("level1",plateau.getBoard()));
@@ -42,6 +43,23 @@ public class ihm extends Application{
 
         primaryStage.setScene(scene);
         primaryStage.setTitle("Sokoban");
+
+        scene.setOnKeyPressed(event ->{
+            switch (event.getCode()) {
+                case UP:
+                    gameController.move(plateau.getBoard().getLevel().getPlayerCase().getPawn(), UP);
+                    break;
+                case DOWN:
+                    gameController.move(plateau.getBoard().getLevel().getPlayerCase().getPawn(), DOWN);
+                    break;
+                case LEFT:
+                    gameController.move(plateau.getBoard().getLevel().getPlayerCase().getPawn(), LEFT);
+                    break;
+                case RIGHT:
+                    gameController.move(plateau.getBoard().getLevel().getPlayerCase().getPawn(), RIGHT);
+                    break;
+            }
+        });
 
         primaryStage.show();
         }

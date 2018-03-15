@@ -26,7 +26,7 @@ public class Plateau implements Observer{
         this.decalageY = 20;
     }
 
-    public view.ihm getIhm() {
+    private view.ihm getIhm() {
         return ihm;
     }
 
@@ -36,7 +36,6 @@ public class Plateau implements Observer{
 
     @Override
     public void update(Object source) {
-        System.out.println("oui");
 
         Canvas canvas = new Canvas( 800, 600 );
         this.getIhm().groupe.getChildren().add( canvas );
