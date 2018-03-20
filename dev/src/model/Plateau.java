@@ -30,6 +30,7 @@ public class Plateau implements Observer{
         return ihm;
     }
 
+
     public Board getBoard(){
         return board;
     }
@@ -38,7 +39,7 @@ public class Plateau implements Observer{
     public void update(Object source) {
 
         Canvas canvas = new Canvas( 800, 600 );
-        this.getIhm().groupe.getChildren().add( canvas );
+        this.getIhm().groupe.getChildren().add(canvas);
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
         int cpt1 = 0;
