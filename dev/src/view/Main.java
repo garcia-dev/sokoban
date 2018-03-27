@@ -29,6 +29,7 @@ public class Main implements Observer {
 	}
 
 	public static void main(String[] args) {
+		System.out.println(System.getProperty("user.home"));
 		Main main = new Main(new Board());
 
 		main.board.setLevel(LevelLoader.loadFile("level1", main.board));
