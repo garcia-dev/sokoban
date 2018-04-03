@@ -12,11 +12,15 @@ package view.gui;
 
 import controller.GameController;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import model.Board;
@@ -25,6 +29,8 @@ import model.LevelLoader;
 import static model.Direction.*;
 
 public class MainGUI extends Application {
+
+	private static final ObservableList levels = FXCollections.observableArrayList();
 
 	public Group groupe;
 
@@ -50,28 +56,49 @@ public class MainGUI extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
+
+		BoardGUI boardGUI = new BoardGUI(new Board(), this);
+
+		GameController gameController = new GameController(boardGUI.getBoard());
+
+		boardGUI.getBoard().addObserver(boardGUI);
+
+		levels.addAll("level1","level2","level3","level4");
+
+		ChoiceBox listLevels = new ChoiceBox(levels);
+		listLevels.getSelectionModel().selectFirst();
+		listLevels.setLayoutX(330);
+		listLevels.setLayoutY(450);
+		listLevels.setPrefSize(150,25);
+
 		Button startBtn = new Button();
 		startBtn.setMinWidth(800);
 		startBtn.setLayoutX(0);
 		startBtn.setLayoutY(500);
 		startBtn.setText("Start");
-		startBtn.setOnAction(event -> primaryStage.setScene(scene));
+		startBtn.setOnAction(event -> {
+			boardGUI.getBoard().setLevel(LevelLoader.loadFile(listLevels.getValue().toString(), boardGUI.getBoard()));
+			primaryStage.setScene(scene);
+			boardGUI.update(this);
+
+		});
+
+		Button menuBtn = new Button();
+		menuBtn.setMinWidth(300);
+		menuBtn.setLayoutX(0);
+		menuBtn.setLayoutY(200);
+		menuBtn.setText("Retour au menu principal");
+		menuBtn.setOnAction(event -> primaryStage.setScene(sceneMenu));
+
+		groupeNextLevel.getChildren().add(menuBtn);
 
 		Canvas canvasMenu = new Canvas(800, 600);
 		GraphicsContext gcMenu = canvasMenu.getGraphicsContext2D();
-//        Image logoMenu = new Image(getClass().getResource("logo.png").toString());
-//        gcMenu.drawImage(logoMenu, 230, 25);
+        Image logoMenu = new Image(getClass().getResource("../logo.png").toString());
+        gcMenu.drawImage(logoMenu, 230, 25);
 		this.groupeMenu.getChildren().add(canvasMenu);
 
 		groupeMenu.getChildren().add(startBtn);
-
-
-		BoardGUI boardGUI = new BoardGUI(new Board(), this);
-		boardGUI.getBoard().setLevel(LevelLoader.loadFile("level1", boardGUI.getBoard()));
-		boardGUI.update(this);
-		GameController gameController = new GameController(boardGUI.getBoard());
-
-		boardGUI.getBoard().addObserver(boardGUI);
 
 		primaryStage.setScene(sceneMenu);
 		primaryStage.setTitle("Sokoban");
@@ -100,7 +127,11 @@ public class MainGUI extends Application {
 
 		});
 
+
+
+		groupeMenu.getChildren().add(listLevels);
 		primaryStage.show();
+		System.out.println();
 	}
 
 

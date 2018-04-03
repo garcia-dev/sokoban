@@ -37,21 +37,25 @@ public class Pawn {
 				aCase.removePawn();
 				board.getLevel().getCaseArray()[aCase.getCoord()[0] - 1][aCase.getCoord()[1]].addPawn(this);
 				aCase = board.getLevel().getCaseArray()[aCase.getCoord()[0] - 1][aCase.getCoord()[1]];
+				System.out.println(this.board.getLevel().getScore().getStepCount());
 				break;
 			case DOWN:
 				aCase.removePawn();
 				board.getLevel().getCaseArray()[aCase.getCoord()[0] + 1][aCase.getCoord()[1]].addPawn(this);
 				aCase = board.getLevel().getCaseArray()[aCase.getCoord()[0] + 1][aCase.getCoord()[1]];
+				System.out.println(this.board.getLevel().getScore().getStepCount());
 				break;
 			case LEFT:
 				aCase.removePawn();
 				board.getLevel().getCaseArray()[aCase.getCoord()[0]][aCase.getCoord()[1] - 1].addPawn(this);
 				aCase = board.getLevel().getCaseArray()[aCase.getCoord()[0]][aCase.getCoord()[1] - 1];
+				System.out.println(this.board.getLevel().getScore().getStepCount());
 				break;
 			case RIGHT:
 				aCase.removePawn();
 				board.getLevel().getCaseArray()[aCase.getCoord()[0]][aCase.getCoord()[1] + 1].addPawn(this);
 				aCase = board.getLevel().getCaseArray()[aCase.getCoord()[0]][aCase.getCoord()[1] + 1];
+				System.out.println(this.board.getLevel().getScore().getStepCount());
 				break;
 		}
 

@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 public class Score extends AbstractModel {
     private String playerName;
     private int score;
-    private int stepCount;
+    private double stepCount;
     private double gameLength;
     private int triesCount;
     private Duration duration;
@@ -27,7 +27,7 @@ public class Score extends AbstractModel {
         return score;
     }
 
-    public int getStepCount() {
+    public double getStepCount() {
         return stepCount;
     }
 
