@@ -12,6 +12,8 @@ package view.gui;
 
 import controller.GameController;
 import javafx.application.Application;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
@@ -44,18 +46,19 @@ public class MainGUI extends Application {
 
 	private Scene sceneNextLevel;
 
-
 	public MainGUI() {
 		this.groupe = new Group();
 		this.groupeMenu = new Group();
 		this.groupeNextLevel = new Group();
-		this.scene = new Scene(groupe, 800, 600, Color.BEIGE);
+		this.scene = new Scene(groupe, 1000, 600, Color.BEIGE);
 		this.sceneMenu = new Scene(groupeMenu, 800, 600, Color.BEIGE);
 		this.sceneNextLevel = new Scene(groupeNextLevel, 300, 300, Color.GRAY);
 	}
 
 	@Override
 	public void start(Stage primaryStage) {
+
+		Boolean quitGame = Boolean.FALSE;
 
 		BoardGUI boardGUI = new BoardGUI(new Board(), this);
 
@@ -71,6 +74,26 @@ public class MainGUI extends Application {
 		listLevels.setLayoutY(450);
 		listLevels.setPrefSize(150,25);
 
+		Button menuBtn = new Button();
+		menuBtn.setMinWidth(300);
+		menuBtn.setLayoutX(0);
+		menuBtn.setLayoutY(200);
+		menuBtn.setText("Retour au menu principal");
+		menuBtn.setOnAction(event -> primaryStage.setScene(sceneMenu));
+
+		Canvas sideCanvas = new Canvas(200,600);
+		GraphicsContext gcSide = sideCanvas.getGraphicsContext2D();
+		gcSide.setFill(Color.web("#f0f4c3",1.0));
+		gcSide.fillRect(0,0,sideCanvas.getWidth(), sideCanvas.getHeight());
+		sideCanvas.setLayoutX(800);
+		gcSide.setStroke(Color.BLACK);
+		gcSide.setLineWidth(2);
+		gcSide.strokeRect(0,0,sideCanvas.getWidth(), sideCanvas.getHeight());
+		gcSide.strokeText("Score :", 85, 100);
+		gcSide.strokeText("Appuyer sur ECHAP pour\nrevenir au menu principal", 55 ,550, 100);
+		gcSide.strokeText("Compteur de pas :\n" + "5" ,50,200);
+
+
 		Button startBtn = new Button();
 		startBtn.setMinWidth(800);
 		startBtn.setLayoutX(0);
@@ -79,16 +102,12 @@ public class MainGUI extends Application {
 		startBtn.setOnAction(event -> {
 			boardGUI.getBoard().setLevel(LevelLoader.loadFile(listLevels.getValue().toString(), boardGUI.getBoard()));
 			primaryStage.setScene(scene);
+			boardGUI.middle(boardGUI.getBoard());
 			boardGUI.update(this);
+			this.groupe.getChildren().clear();
+			this.groupe.getChildren().addAll(boardGUI.canvas, sideCanvas);
 
 		});
-
-		Button menuBtn = new Button();
-		menuBtn.setMinWidth(300);
-		menuBtn.setLayoutX(0);
-		menuBtn.setLayoutY(200);
-		menuBtn.setText("Retour au menu principal");
-		menuBtn.setOnAction(event -> primaryStage.setScene(sceneMenu));
 
 		groupeNextLevel.getChildren().add(menuBtn);
 
@@ -96,9 +115,7 @@ public class MainGUI extends Application {
 		GraphicsContext gcMenu = canvasMenu.getGraphicsContext2D();
         Image logoMenu = new Image(getClass().getResource("../logo.png").toString());
         gcMenu.drawImage(logoMenu, 230, 25);
-		this.groupeMenu.getChildren().add(canvasMenu);
-
-		groupeMenu.getChildren().add(startBtn);
+		this.groupeMenu.getChildren().addAll(canvasMenu,startBtn,listLevels);
 
 		primaryStage.setScene(sceneMenu);
 		primaryStage.setTitle("Sokoban");
@@ -117,21 +134,22 @@ public class MainGUI extends Application {
 				case RIGHT:
 					gameController.move(boardGUI.getBoard().getLevel().getPlayerCase().getPawn(), RIGHT);
 					break;
+				case ESCAPE:
+					boardGUI.gc.clearRect(0,0,boardGUI.canvas.getWidth(),boardGUI.canvas.getHeight());
+					primaryStage.setScene(sceneMenu);
+					break;
 			}
 
-			if (!boardGUI.getBoard().getLevel().isFinished()) {
+			if (!boardGUI.getBoard().getLevel().isFinished() && quitGame) {
 				primaryStage.setScene(scene);
 			} else if (boardGUI.getBoard().getLevel().isFinished()) {
+				boardGUI.gc.clearRect(0,0,boardGUI.canvas.getWidth(),boardGUI.canvas.getHeight());
 				primaryStage.setScene(sceneNextLevel);
 			}
 
 		});
 
-
-
-		groupeMenu.getChildren().add(listLevels);
 		primaryStage.show();
-		System.out.println();
 	}
 
 
