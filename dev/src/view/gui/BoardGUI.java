@@ -1,5 +1,6 @@
 package view.gui;
 
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -17,7 +18,7 @@ import utility.Observer;
  * @version 2018-04-10
  */
 
-public class BoardGUI implements Observer {
+public class BoardGUI extends Node implements Observer {
 
     private Board board;
 
@@ -27,16 +28,16 @@ public class BoardGUI implements Observer {
 
     private int centerShiftY;
 
-    public Canvas canvas;
+    Canvas canvas;
 
     public GraphicsContext gc;
 
-    public BoardGUI(Board board, MainGUI mainGUI){
+    public BoardGUI(Board board, MainGUI mainGUI, int width, int height){
         this.board = board;
         this.mainGUI = mainGUI;
         this.centerShiftX = 0;
         this.centerShiftY = 0;
-        this.canvas = new Canvas( 800, 600 );
+        this.canvas = new Canvas( width, height);
         this.gc = canvas.getGraphicsContext2D();
     }
 
@@ -60,6 +61,10 @@ public class BoardGUI implements Observer {
 
     public Board getBoard(){
         return board;
+    }
+
+    public Canvas getCanvas() {
+        return canvas;
     }
 
     @Override
@@ -105,4 +110,9 @@ public class BoardGUI implements Observer {
             cpt1 = 0;
             }
         }
-    }
+
+	@Override
+	public Node getStyleableNode() {
+		return null;
+	}
+}
