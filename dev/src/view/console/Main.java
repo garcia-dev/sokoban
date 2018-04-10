@@ -104,7 +104,7 @@ public class Main implements Observer {
 			}
 		} else {
 			Solver solver = new Solver(main.board);
-			solver.solveBoard(gameController);
+			solver.solveBoard(gameController, false);
 		}
 
 		System.out.println("-----------!! CONGRATULATIONS !!-----------");

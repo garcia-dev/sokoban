@@ -24,8 +24,11 @@ public class Node {
 
 	private Node parentNode;
 
-	private int distanceFromStartNode = 0;
-
+	/**
+	 * Node's constructor initializing the Case affiliated.
+	 *
+	 * @param aCase the Case affiliated to the node
+	 */
 	Node(Case aCase) {
 		this.aCase = aCase;
 
@@ -34,36 +37,59 @@ public class Node {
 		board = aCase.getBoard();
 	}
 
-	public int calcDistanceFromNode(Node node) {
+	/**
+	 * Method that calculate the distance from currntNode to the parameter Node.
+	 *
+	 * @param node the node to calculte the distance to
+	 * @return the distance between the two nodes
+	 */
+	int calcDistanceFromNode(Node node) {
 		int[] goalNodeCoord = node.getCase().getCoord();
 
 		return Math.abs(goalNodeCoord[0] - aCase.getCoord()[0]) + Math.abs(goalNodeCoord[1] - aCase.getCoord()[1]);
 	}
 
-	public int getDistanceFromStartNode() {
-		return distanceFromStartNode;
-	}
-
+	/**
+	 * Getter of the Case affiliated to the Node.
+	 *
+	 * @return the Case affiliated to the Node
+	 */
 	public Case getCase() {
 		return aCase;
 	}
 
+	/**
+	 * Getter of the ParentNode Node.
+	 *
+	 * @return the ParentNode Node
+	 */
 	Node getParentNode() {
 		return parentNode;
 	}
 
+	/**
+	 * Getter of the neighbors list.
+	 *
+	 * @return an ArrayList of the Node neighbors
+	 */
 	ArrayList<Node> getNeighbors() {
 		return neighbors;
 	}
 
-	public void setDistanceFromStartNode() {
-		this.distanceFromStartNode += parentNode.getDistanceFromStartNode() + this.calcDistanceFromNode(parentNode);
-	}
-
+	/**
+	 * Setter of the ParentNode Node.
+	 *
+	 * @param parentNode the ParentNode
+	 */
 	void setParentNode(Node parentNode) {
 		this.parentNode = parentNode;
 	}
 
+	/**
+	 * Setter of the Node neighbors.
+	 *
+	 * @param nodes the 2D array of Nodes
+	 */
 	void setNeighbors(Node[][] nodes) {
 		if (nodes != null) {
 			if (aCase.getCoord()[0] - 1 >= 0 && nodes[aCase.getCoord()[0] - 1][aCase.getCoord()[1]].getCase().getState() != State.WALL)
@@ -81,6 +107,11 @@ public class Node {
 			neighbors.clear();
 	}
 
+	/**
+	 * Method checking if the node is in a corner.
+	 *
+	 * @return true if the node is in a corner, false if it isn't
+	 */
 	boolean isCorner() {
 		Case[][] caseArray = board.getLevel().getCaseArray();
 
@@ -93,6 +124,9 @@ public class Node {
 		return false;
 	}
 
+	/**
+	 * @see Object#toString()
+	 */
 	@Override
 	public String toString() {
 		if (parentNode != null)
