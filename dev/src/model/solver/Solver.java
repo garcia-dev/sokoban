@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * Solver's class
  * <p>
- *     The Solver class represents the AI code. It is used to solve the board by itself.
+ * The Solver class represents the AI code. It is used to solve the board by itself.
  * </p>
  *
  * @author GARCIA Romain, DE OLIVEIRA Dylan, NGUYEN Michaël, VINCIGUERRA Antoine
@@ -20,12 +20,20 @@ public class Solver {
 	private final Board board;
 	private Node[][] nodes;
 
+	/**
+	 * Solver's constructor initializing the Board.
+	 *
+	 * @param board the board to use for the Solver
+	 */
 	public Solver(Board board) {
 		this.board = board;
 
 		initNodes();
 	}
 
+	/**
+	 * Method that creates a Node for each Case in the Board.
+	 */
 	private void initNodes() {
 		nodes = new Node[board.getLevel().getCaseArray().length][];
 
@@ -37,19 +45,33 @@ public class Solver {
 		}
 	}
 
-	public void solveBoard(GameController gameController) {
+	/**
+	 * Method that solves the board.
+	 *
+	 * @param gameController the gameController used in the game
+	 * @param anyTime        tells if the "anyTime" mode is enabled or not
+	 */
+	public void solveBoard(GameController gameController, Boolean anyTime) {
 		Node playerNode = findPlayerNode();
 
+		assert playerNode != null;
+
 		while (!(gameController.isFinished())) {
+			// Selection of the nearest crate from the player node and the nearest target from that crate
 			Node nearestCrate = findNearest(playerNode, Type.CRATE, null);
 			Node nearestTargetFromCrate = findNearest(nearestCrate, null, State.TARGET);
 
+			// Construction of the path from the selected crate and the selected target
 			List<Node> path = searchPath(nearestCrate, nearestTargetFromCrate);
 
+			// Construction of the list of moves following the path
+			assert path != null;
 			ArrayList<Direction> movesFromCrateToTarget = getMoves(path);
 
+			// For each move
 			Direction currentDirection = null;
 			for (Direction direction : movesFromCrateToTarget) {
+				// If the direction of the movement changes, replace the player to be able to push the crate to the good direction
 				if (direction != currentDirection) {
 					currentDirection = direction;
 
@@ -70,11 +92,23 @@ public class Solver {
 							break;
 					}
 
+					// Construction of the list of moves from the player node to the correct position to push the crate
 					ArrayList<Direction> movesToPlayerMovementNode = getMoves(searchPath(playerNode, playerMovementNode));
-					gameController.moveSequence(playerNode.getCase().getPawn(), movesToPlayerMovementNode);
+
+					// If anyTime mode is enabled, moves the player case by case to be able to put the Thread to sleep, else moves it until the end
+					if (!anyTime) {
+						gameController.moveSequence(playerNode.getCase().getPawn(), movesToPlayerMovementNode);
+					} else {
+						for (Direction move : movesToPlayerMovementNode) {
+							gameController.move(playerNode.getCase().getPawn(), move);
+						}
+					}
+
+					// Getting the new coordinates of the player
 					playerNode = findPlayerNode();
 				}
 
+				// Moves the player following the direction
 				gameController.move(playerNode.getCase().getPawn(), currentDirection);
 				playerNode = findPlayerNode();
 				nearestCrate = findNearest(playerNode, Type.CRATE, null);
@@ -82,6 +116,11 @@ public class Solver {
 		}
 	}
 
+	/**
+	 * Loop through the 2D array of nodes to search the for node corresponding to the Player pawn.
+	 *
+	 * @return the node corresponding to the Player pawn
+	 */
 	private Node findPlayerNode() {
 		for (Node[] row : nodes)
 			for (Node node : row)
@@ -91,6 +130,14 @@ public class Solver {
 		return null;
 	}
 
+	/**
+	 * Method finding the nearest Node corresponding to the type or state entered as parameter from the starting Node
+	 *
+	 * @param startingNode the node from which we are searching
+	 * @param type the type of the node we are searching for
+	 * @param state the state of the node we are searching for
+	 * @return the nearest Node corresponding to the type or state entered as parameter from the starting Node
+	 */
 	private Node findNearest(Node startingNode, Type type, State state) {
 		ArrayList<Node> nodesArraylist = new ArrayList<>();
 
@@ -115,6 +162,12 @@ public class Solver {
 		return selectedNode;
 	}
 
+	/**
+	 * Calculates an ArrayList from the path list
+	 *
+	 * @param path the path to create a list of movements from
+	 * @return a list of direction
+	 */
 	private ArrayList<Direction> getMoves(List<Node> path) {
 		ArrayList<Direction> moves = new ArrayList<>();
 
@@ -135,19 +188,29 @@ public class Solver {
 		return moves;
 	}
 
+	/**
+	 * Method searching the path from startNode to goalNode
+	 *
+	 * @param startNode the node we are going from
+	 * @param goalNode the node we are going to
+	 * @return the list of Node to go through
+	 */
 	private List<Node> searchPath(Node startNode, Node goalNode) {
+		// Resetting the parent node of each node
 		for (Node[] row : nodes)
 			for (Node node : row) node.setParentNode(null);
 
-//		System.out.println("\n\nstartNode=" + startNode + " - type=" + startNode.getCase().getPawn().getType());
-//		System.out.println("goalNode=" + goalNode);
-
+		// The closedList is a list of Node checked
 		ArrayList<Node> closedList = new ArrayList<>();
+
+		// The openedList is a list of Node we can reach from the checked nodes to check them
 		ArrayList<Node> openedList = new ArrayList<>(Collections.singletonList(startNode));
 
+		// Map of the distance for each node to the startNode
 		Map<Node, Integer> distanceFromNodeToStartNode = new HashMap<>();
 		distanceFromNodeToStartNode.put(startNode, 0);
 
+		// Map of the score of each node
 		Map<Node, Integer> fScore = new HashMap<>();
 		for (Node[] row : nodes)
 			for (Node node : row)
@@ -163,41 +226,42 @@ public class Solver {
 			return 0;
 		};
 
-		while (!openedList.isEmpty()){
-//			System.out.println("openedList=");
-//			openedList.forEach(node -> System.out.println("\t" + node));
-
-//			System.out.println("closedList=");
-//			closedList.forEach(node -> System.out.println("\t" + node));
-
+		// While the openedList contains a Node
+		while (!openedList.isEmpty()) {
 			Node current = openedList.get(0);
 
+			// If the current node is the goal node
 			if (current == goalNode)
 				return constructPath(startNode, goalNode);
 
+			// We remove the checking node from the openedList and adding it to the closedList
 			openedList.remove(0);
 			closedList.add(current);
 
-//			System.out.println("currentNode=" + current);
-
+			// Setting the neighbors of the current node
 			current.setNeighbors(nodes);
-			for (Node neighbor : current.getNeighbors()){
-//				System.out.println("\t" + neighbor + " - isCorner=" + neighbor.isCorner());
+
+			// For each neighbor, if the neighbor node is not valid or is the goal node
+			for (Node neighbor : current.getNeighbors()) {
 				if (neighbor.getCase().getPawn() != null || (startNode.getCase().getPawn().getType() == Type.CRATE && neighbor.isCorner() && neighbor != goalNode) || closedList.contains(neighbor))
 					continue;
 
+				// Calculates the distance between the neighbor node and the start node
 				int neighborDistanceFromStartNode = distanceFromNodeToStartNode.get(current) + current.calcDistanceFromNode(neighbor);
 				if (!openedList.contains(neighbor))
 					openedList.add(neighbor);
 				else if (neighborDistanceFromStartNode >= distanceFromNodeToStartNode.get(neighbor))
 					continue;
 
+				// Setting the neighbor parent and adding the distance from the start node to the map
 				neighbor.setParentNode(current);
 				distanceFromNodeToStartNode.put(neighbor, neighborDistanceFromStartNode);
 
+				// Calculating the neighbor score and adding it to the map
 				int neighborScore = neighborDistanceFromStartNode + neighbor.calcDistanceFromNode(goalNode);
 				fScore.put(neighbor, neighborScore);
 
+				// Resortting the openedList
 				openedList.sort(comparator);
 			}
 		}
@@ -205,6 +269,16 @@ public class Solver {
 		return null;
 	}
 
+	/**
+	 * Construct the path from a node to another.
+	 * <p>
+	 *     What it does is rolling up the parent nodes and adding it to the path.
+	 * </p>
+	 *
+	 * @param start starting node
+	 * @param end ending node
+	 * @return a list of Nodes as path
+	 */
 	private List<Node> constructPath(Node start, Node end) {
 		LinkedList<Node> path = new LinkedList<>();
 
