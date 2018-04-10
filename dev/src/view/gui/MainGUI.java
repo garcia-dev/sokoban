@@ -11,6 +11,9 @@ package view.gui;
  */
 
 import controller.GameController;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -23,8 +26,10 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import model.general.Board;
 import model.general.LevelLoader;
+
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -61,12 +66,20 @@ public class MainGUI extends Application {
 	public void start(Stage primaryStage) {
 
 		Boolean quitGame = Boolean.FALSE;
-
 		BoardGUI boardGUI = new BoardGUI(new Board(), this);
-
 		GameController gameController = new GameController(boardGUI.getBoard());
-
 		boardGUI.getBoard().addObserver(boardGUI);
+
+		ScoreGUI scoreGUI = new ScoreGUI(boardGUI.getBoard());
+		scoreGUI.getBoard().addObserver(scoreGUI);
+
+		Timeline timeline = new Timeline(new KeyFrame(
+				Duration.millis(1000),
+				ae -> {
+					scoreGUI.timer++;
+					scoreGUI.update();
+				}));
+		timeline.setCycleCount(Animation.INDEFINITE);
 
 		int numberOfLevels = 0;
 		try {
@@ -90,31 +103,20 @@ public class MainGUI extends Application {
 		menuBtn.setText("Retour au menu principal");
 		menuBtn.setOnAction(event -> primaryStage.setScene(sceneMenu));
 
-		Canvas sideCanvas = new Canvas(200,600);
-		GraphicsContext gcSide = sideCanvas.getGraphicsContext2D();
-		gcSide.setFill(Color.web("#f0f4c3",1.0));
-		gcSide.fillRect(0,0,sideCanvas.getWidth(), sideCanvas.getHeight());
-		sideCanvas.setLayoutX(800);
-		gcSide.setStroke(Color.BLACK);
-		gcSide.setLineWidth(2);
-		gcSide.strokeRect(0,0,sideCanvas.getWidth(), sideCanvas.getHeight());
-		gcSide.strokeText("Score :", 85, 100);
-		gcSide.strokeText("Appuyer sur ECHAP pour\nrevenir au menu principal", 55 ,550, 100);
-		gcSide.strokeText("Compteur de pas :\n" + "5" ,50,200);
-
-
 		Button startBtn = new Button();
 		startBtn.setMinWidth(800);
 		startBtn.setLayoutX(0);
 		startBtn.setLayoutY(500);
 		startBtn.setText("Start");
 		startBtn.setOnAction(event -> {
+			timeline.play();
 			boardGUI.getBoard().setLevel(LevelLoader.loadFile(listLevels.getValue(), boardGUI.getBoard()));
 			primaryStage.setScene(scene);
 			boardGUI.middle(boardGUI.getBoard());
 			boardGUI.update();
+			scoreGUI.update();
 			this.groupe.getChildren().clear();
-			this.groupe.getChildren().addAll(boardGUI.canvas, sideCanvas);
+			this.groupe.getChildren().addAll(boardGUI.canvas, scoreGUI.getPanel());
 
 		});
 
@@ -154,7 +156,9 @@ public class MainGUI extends Application {
 			} else if (gameController.isFinished()) {
 				boardGUI.gc.clearRect(0,0,boardGUI.canvas.getWidth(),boardGUI.canvas.getHeight());
 				primaryStage.setScene(sceneNextLevel);
+
 			}
+			scoreGUI.update();
 
 		});
 
