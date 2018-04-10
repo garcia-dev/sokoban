@@ -1,0 +1,50 @@
+\select@language {french}
+\contentsline {section}{\numberline {1}Introduction}{2}
+\contentsline {subsection}{\numberline {1.1}Pourquoi ce projet et que cela peut-il apporter au groupe ?}{2}
+\contentsline {paragraph}{}{2}
+\contentsline {subsection}{\numberline {1.2}Le sujet}{2}
+\contentsline {paragraph}{}{2}
+\contentsline {subsection}{\numberline {1.3}Le sokoban}{2}
+\contentsline {subsubsection}{\numberline {1.3.1}Son histoire}{2}
+\contentsline {paragraph}{}{2}
+\contentsline {paragraph}{}{2}
+\contentsline {section}{\numberline {2}Le jeu}{3}
+\contentsline {subsection}{\numberline {2.1}Pr\IeC {\'e}sentation du jeu}{3}
+\contentsline {subsubsection}{\numberline {2.1.1}Ses r\IeC {\`e}gles}{3}
+\contentsline {subsubsection}{\numberline {2.1.2}Le cahier des charges fonctionnel}{3}
+\contentsline {subsubsection}{\numberline {2.1.3}Les diff\IeC {\'e}rentes contraintes \IeC {\`a} respecter}{4}
+\contentsline {paragraph}{}{4}
+\contentsline {paragraph}{}{4}
+\contentsline {subsubsection}{\numberline {2.1.4}Diagramme UML}{4}
+\contentsline {paragraph}{}{5}
+\contentsline {subsection}{\numberline {2.2}Pr\IeC {\'e}sentation des diff\IeC {\'e}rents packages}{5}
+\contentsline {subsubsection}{\numberline {2.2.1}Model}{5}
+\contentsline {subsubsection}{\numberline {2.2.2}View}{5}
+\contentsline {subsubsection}{\numberline {2.2.3}Controller}{5}
+\contentsline {section}{\numberline {3}\IeC {\'E}l\IeC {\'e}ments techniques}{6}
+\contentsline {subsection}{\numberline {3.1}Algorithme}{6}
+\contentsline {subsubsection}{\numberline {3.1.1}Les d\IeC {\'e}placements}{6}
+\contentsline {subsubsection}{\numberline {3.1.2}L'IA}{6}
+\contentsline {subsection}{\numberline {3.2}L'interface graphique}{6}
+\contentsline {subsubsection}{\numberline {3.2.1}JavaFX}{6}
+\contentsline {subsubsection}{\numberline {3.2.2}Pourquoi JavaFX?}{6}
+\contentsline {section}{\numberline {4}Exp\IeC {\'e}rimentation sur le jeu}{7}
+\contentsline {subsection}{\numberline {4.1}Test du jeu sans l'interface graphique}{7}
+\contentsline {subsubsection}{\numberline {4.1.1}Test des r\IeC {\`e}gles du jeu}{7}
+\contentsline {paragraph}{}{7}
+\contentsline {paragraph}{}{7}
+\contentsline {paragraph}{}{7}
+\contentsline {paragraph}{}{8}
+\contentsline {subsubsection}{\numberline {4.1.2}Test des r\IeC {\`e}gles du jeu}{8}
+\contentsline {subsection}{\numberline {4.2}Test du jeu avec l'interface graphique}{8}
+\contentsline {paragraph}{}{8}
+\contentsline {paragraph}{}{9}
+\contentsline {paragraph}{}{9}
+\contentsline {subsubsection}{\numberline {4.2.1}Exp\IeC {\'e}rimentation sur l'IA}{9}
+\contentsline {subsection}{\numberline {4.3}Performance}{9}
+\contentsline {section}{\numberline {5}Conclusion}{10}
+\contentsline {subsection}{\numberline {5.1}R\IeC {\'e}capitulatif des fonctionnalit\IeC {\'e}s principales}{10}
+\contentsline {subsection}{\numberline {5.2}Proposition d'am\IeC {\'e}liorations}{10}
+\contentsline {section}{\numberline {6}Annexe}{11}
+\contentsline {paragraph}{}{11}
+\contentsline {section}{\numberline {7}Remerciement}{11}
