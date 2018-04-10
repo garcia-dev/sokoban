@@ -1,14 +1,13 @@
-package model;
+package model.general;
 
 /**
- * State's class
+ * Enumeration of the possible type of a Pawn.
  *
  * @author GARCIA Romain, DE OLIVEIRA Dylan, NGUYEN Michaël, VINCIGUERRA Antoine
  * @version 2018-01-30
  */
 
-public enum State {
-    EMPTY,
-    WALL,
-    TARGET
+public enum Type {
+    PLAYER,
+    CRATE
 }

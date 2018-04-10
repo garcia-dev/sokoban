@@ -1,7 +1,7 @@
-package model;
+package model.general;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -16,26 +16,24 @@ import java.util.stream.Stream;
  * </p>
  *
  * @author GARCIA Romain, DE OLIVEIRA Dylan, NGUYEN Michaël, VINCIGUERRA Antoine
- * @version 2018-02-04
+ * @version 2018-04-10
  * @see Level
- * @see Case
- * @see Pawn
  */
 
 public class LevelLoader {
-	public static Level loadFile(String fileName, Board board) {
-		String workingDirectory = System.getProperty("user.dir");
-
-		if (System.getProperty("os.name").toLowerCase().contains("win"))
-			workingDirectory += File.separator + "dev";
-
-		String absoluteFilePath = workingDirectory + File.separator + "resources" + File.separator + "levels" + File.separator + fileName + ".sok";
-
+	/**
+	 * Method that loads a levelFile and creates the Level corresponding.
+	 *
+	 * @param levelNumber the level number
+	 * @param board       the board affiliated to the Level
+	 * @return the created Level
+	 */
+	public static Level loadFile(int levelNumber, Board board) {
 		List<String> lines = new ArrayList<>();
 
-		try (Stream<String> stream = Files.lines(Paths.get(absoluteFilePath))) {
+		try (Stream<String> stream = Files.lines(Paths.get(ClassLoader.getSystemResource("resources/levels/level" + levelNumber + ".sok").toURI()))) {
 			lines = stream.collect(Collectors.toList());
-		} catch (IOException e) {
+		} catch (IOException | URISyntaxException e) {
 			e.printStackTrace();
 		}
 

@@ -6,14 +6,12 @@ package view.gui;
  * The class MainGUI is used to print a Graphical User Interface using JavaFX.
  * </p>
  *
- * @author GARCIA Romain, DE OLIVEIRA Dylan, NGUYEN Michaël, VINCIGUERRA Antoine
- * @version 2018-03-21
+ * @author DE OLIVEIRA Dylan, GARCIA Romain, NGUYEN Michaël, VINCIGUERRA Antoine
+ * @version 2018-04-10
  */
 
 import controller.GameController;
 import javafx.application.Application;
-import javafx.beans.property.LongProperty;
-import javafx.beans.property.SimpleLongProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
@@ -25,14 +23,18 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import model.Board;
-import model.LevelLoader;
+import model.general.Board;
+import model.general.LevelLoader;
 
-import static model.Direction.*;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.util.Objects;
+
+import static model.general.Direction.*;
 
 public class MainGUI extends Application {
 
-	private static final ObservableList levels = FXCollections.observableArrayList();
+	private static final ObservableList<Integer> levels = FXCollections.observableArrayList();
 
 	public Group groupe;
 
@@ -66,9 +68,16 @@ public class MainGUI extends Application {
 
 		boardGUI.getBoard().addObserver(boardGUI);
 
-		levels.addAll("level1","level2","level3","level4");
+		int numberOfLevels = 0;
+		try {
+			numberOfLevels = Objects.requireNonNull(new File(ClassLoader.getSystemResource("resources/levels").toURI()).listFiles()).length;
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
 
-		ChoiceBox listLevels = new ChoiceBox(levels);
+		for (int levelNumber = 1; levelNumber <= numberOfLevels; levelNumber++) levels.add(levelNumber);
+
+		ChoiceBox<? extends Integer> listLevels = new ChoiceBox<>(levels);
 		listLevels.getSelectionModel().selectFirst();
 		listLevels.setLayoutX(330);
 		listLevels.setLayoutY(450);
@@ -100,10 +109,10 @@ public class MainGUI extends Application {
 		startBtn.setLayoutY(500);
 		startBtn.setText("Start");
 		startBtn.setOnAction(event -> {
-			boardGUI.getBoard().setLevel(LevelLoader.loadFile(listLevels.getValue().toString(), boardGUI.getBoard()));
+			boardGUI.getBoard().setLevel(LevelLoader.loadFile(listLevels.getValue(), boardGUI.getBoard()));
 			primaryStage.setScene(scene);
 			boardGUI.middle(boardGUI.getBoard());
-			boardGUI.update(this);
+			boardGUI.update();
 			this.groupe.getChildren().clear();
 			this.groupe.getChildren().addAll(boardGUI.canvas, sideCanvas);
 
@@ -113,7 +122,7 @@ public class MainGUI extends Application {
 
 		Canvas canvasMenu = new Canvas(800, 600);
 		GraphicsContext gcMenu = canvasMenu.getGraphicsContext2D();
-        Image logoMenu = new Image(getClass().getResource("../logo.png").toString());
+        Image logoMenu = new Image(getClass().getResource("/resources/images/logo.png").toString());
         gcMenu.drawImage(logoMenu, 230, 25);
 		this.groupeMenu.getChildren().addAll(canvasMenu,startBtn,listLevels);
 
@@ -140,9 +149,9 @@ public class MainGUI extends Application {
 					break;
 			}
 
-			if (!boardGUI.getBoard().getLevel().isFinished() && quitGame) {
+			if (!gameController.isFinished() && quitGame) {
 				primaryStage.setScene(scene);
-			} else if (boardGUI.getBoard().getLevel().isFinished()) {
+			} else if (gameController.isFinished()) {
 				boardGUI.gc.clearRect(0,0,boardGUI.canvas.getWidth(),boardGUI.canvas.getHeight());
 				primaryStage.setScene(sceneNextLevel);
 			}

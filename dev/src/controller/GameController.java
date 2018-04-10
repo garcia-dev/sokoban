@@ -1,36 +1,52 @@
 package controller;
 
+import model.general.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Gamecontroller's class
+ * GameController's class
  * <p>
- * The class GameController receives the view's requests, checks if the request is possible, gives the order to the model to apply the request and updates the view.
+ * The class GameController takes care of all the verifications for the movements and to check if the game is finished.
  * </p>
  *
- * @author GARCIA Romain, DE OLIVEIRA Dylan, NGUYEN Michaël, VINCIGUERRA Antoine
- * @version 2018-02-13
- * @see model.Board
+ * @author DE OLIVEIRA Dylan, GARCIA Romain, NGUYEN Michaël, VINCIGUERRA Antoine
+ * @version 2018-04-10
+ * @see Board
  */
-
-import model.*;
-
 public class GameController {
-	private Board board;
+	private final Board board;
 
+	/**
+	 * GameController's constructor which initializes the board.
+	 *
+	 * @param board the board to use
+	 */
 	public GameController(Board board) {
 		this.board = board;
 	}
 
+	/**
+	 * Method that checks if the Pawn can move in the asked Direction, if it can tells to move it.
+	 *
+	 * @param pawn      pawn to move
+	 * @param direction direction to move the pawn
+	 * @return true if the move is done, false if it isn't
+	 */
 	public boolean move(Pawn pawn, Direction direction) {
+		/*  For each direction, we check if the case from that direction isn't a wall, if it isn't, we check if it is
+			a CRATE, if it is we check if there is no obstacle behind it, else we move the pawns.*/
 		switch (direction) {
-			case UP: // if the direction is up
+			case UP:
 				Case up = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0] - 1][pawn.getCase().getCoord()[1]];
-				Case up2 = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0] - 2][pawn.getCase().getCoord()[1]];
 
-				if (up.getPawn() != null && up.getPawn().getType() == Type.CRATE ) {
-					if (up2.getPawn() != null && up2.getPawn().getType() == Type.CRATE) {
+				if (up.getPawn() != null && up.getPawn().getType() == Type.CRATE) {
+					Case upCrate = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0] - 2][pawn.getCase().getCoord()[1]];
+
+					if (upCrate.getPawn() != null && upCrate.getPawn().getType() == Type.CRATE) {
 						return false;
-					}
-					else if(this.move(up.getPawn(), Direction.UP)) {
+					} else if (this.move(up.getPawn(), Direction.UP)) {
 						pawn.move(Direction.UP);
 						return true;
 					}
@@ -43,13 +59,12 @@ public class GameController {
 				break;
 			case RIGHT:
 				Case right = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0]][pawn.getCase().getCoord()[1] + 1];
-				Case right2 = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0]][pawn.getCase().getCoord()[1] + 2];
 
 				if (right.getPawn() != null && right.getPawn().getType() == Type.CRATE) {
-					if (right2.getPawn() != null && right2.getPawn().getType() == Type.CRATE) {
+					Case rightCrate = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0]][pawn.getCase().getCoord()[1] + 2];
+					if (rightCrate.getPawn() != null && rightCrate.getPawn().getType() == Type.CRATE) {
 						return false;
-					}
-					else if (this.move(right.getPawn(), Direction.RIGHT)) {
+					} else if (this.move(right.getPawn(), Direction.RIGHT)) {
 						pawn.move(Direction.RIGHT);
 						return true;
 					}
@@ -62,13 +77,12 @@ public class GameController {
 				break;
 			case DOWN:
 				Case down = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0] + 1][pawn.getCase().getCoord()[1]];
-				Case down2 = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0] + 2][pawn.getCase().getCoord()[1]];
 
 				if (down.getPawn() != null && down.getPawn().getType() == Type.CRATE) {
-					if (down2.getPawn() != null && down2.getPawn().getType() == Type.CRATE) {
+					Case downCrate = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0] + 2][pawn.getCase().getCoord()[1]];
+					if (downCrate.getPawn() != null && downCrate.getPawn().getType() == Type.CRATE) {
 						return false;
-					}
-					else if(this.move(down.getPawn(), Direction.DOWN)) {
+					} else if (this.move(down.getPawn(), Direction.DOWN)) {
 						pawn.move(Direction.DOWN);
 						return true;
 					}
@@ -81,13 +95,12 @@ public class GameController {
 				break;
 			case LEFT:
 				Case left = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0]][pawn.getCase().getCoord()[1] - 1];
-				Case left2 = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0]][pawn.getCase().getCoord()[1] - 2];
 
 				if (left.getPawn() != null && left.getPawn().getType() == Type.CRATE) {
-					if (left2.getPawn() != null && left2.getPawn().getType() == Type.CRATE) {
+					Case leftCrate = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0]][pawn.getCase().getCoord()[1] - 2];
+					if (leftCrate.getPawn() != null && leftCrate.getPawn().getType() == Type.CRATE) {
 						return false;
-					}
-					else if (this.move(left.getPawn(), Direction.LEFT)) {
+					} else if (this.move(left.getPawn(), Direction.LEFT)) {
 						pawn.move(Direction.LEFT);
 						return true;
 					}
@@ -100,6 +113,40 @@ public class GameController {
 				break;
 		}
 
+		return false;
+	}
+
+	/**
+	 * Method that checks movements of a Pawn within a Direction ArrayList using the "move" method for each Direction.
+	 *
+	 * @param pawn  the pawn to move
+	 * @param moves the list of direction
+	 * @see GameController#move(Pawn, Direction)
+	 */
+	public void moveSequence(Pawn pawn, ArrayList<Direction> moves) {
+		for (Direction direction : moves)
+			move(pawn, direction);
+	}
+
+	/**
+	 * Method that checks if the game is done or not
+	 *
+	 * @return true if the game is done, false if it isn't
+	 */
+	public boolean isFinished() {
+		List<Case> targetArray = board.getLevel().getTargetArray();
+		int crateOnTarget = 0;
+
+		for (Case case1 : targetArray)
+			if (case1.getPawn() != null && case1.getPawn().getType() == Type.CRATE)
+				crateOnTarget++;
+
+		if (crateOnTarget == targetArray.size()) {
+			board.getLevel().setEndDate();
+			board.getLevel().getScore().setDuration(board.getLevel().getDates()[0], board.getLevel().getDates()[1]);
+
+			return true;
+		}
 		return false;
 	}
 }

@@ -3,9 +3,9 @@ package view.gui;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import model.Board;
-import model.Case;
-import model.Observer;
+import model.general.Board;
+import model.general.Case;
+import utility.Observer;
 
 /**
  * BoardGUI's class
@@ -13,8 +13,8 @@ import model.Observer;
  * The class BoardGUI is used to print a gui's version of the actual Board.
  * </p>
  *
- * @author GARCIA Romain, DE OLIVEIRA Dylan, NGUYEN Michaël, VINCIGUERRA Antoine
- * @version 2018-03-21
+ * @author DE OLIVEIRA Dylan, GARCIA Romain, NGUYEN Michaël, VINCIGUERRA Antoine
+ * @version 2018-04-10
  */
 
 public class BoardGUI implements Observer {
@@ -63,7 +63,7 @@ public class BoardGUI implements Observer {
     }
 
     @Override
-    public void update(Object source) {
+    public void update() {
 
         int cpt1 = 0;
         int cpt2 = 0;
