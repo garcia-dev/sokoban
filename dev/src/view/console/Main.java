@@ -11,6 +11,7 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -24,7 +25,7 @@ import java.util.Scanner;
  * @see Board
  */
 public class Main implements Observer {
-	Board board;
+	private final Board board;
 
 	/**
 	 * Main's constructor initializing the board.
@@ -73,7 +74,7 @@ public class Main implements Observer {
 
 		System.out.println(main.board.getLevel());
 
-		String AImode = "";
+		String AImode;
 		System.out.println("Do you want the AI to do complete the level ? (yes/no)");
 
 		do {
@@ -104,7 +105,7 @@ public class Main implements Observer {
 			}
 		} else {
 			Solver solver = new Solver(main.board);
-			solver.solveBoard(gameController, false);
+			solver.solveBoard(gameController);
 		}
 
 		System.out.println("-----------!! CONGRATULATIONS !!-----------");
@@ -114,5 +115,10 @@ public class Main implements Observer {
 	@Override
 	public void update() {
 		System.out.println(board.getLevel());
+		try {
+			TimeUnit.SECONDS.sleep(1);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }

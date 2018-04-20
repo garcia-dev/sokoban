@@ -26,7 +26,7 @@ public class Level {
 	 *
 	 * @param caseArray 2D array of the level's grid
 	 */
-	Level(Case[][] caseArray) {
+	public Level(Case[][] caseArray) {
 		this.caseArray = caseArray;
 
 		score = new Score();

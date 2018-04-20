@@ -1,7 +1,10 @@
 package model.solver;
 
 import controller.GameController;
-import model.general.*;
+import model.general.Board;
+import model.general.Direction;
+import model.general.State;
+import model.general.Type;
 
 import java.util.*;
 
@@ -49,10 +52,10 @@ public class Solver {
 	 * Method that solves the board.
 	 *
 	 * @param gameController the gameController used in the game
-	 * @param anyTime        tells if the "anyTime" mode is enabled or not
 	 */
-	public void solveBoard(GameController gameController, Boolean anyTime) {
+	public ArrayList<Direction> solveBoard(GameController gameController) {
 		Node playerNode = findPlayerNode();
+		ArrayList<Direction> playerMoves = new ArrayList<>();
 
 		assert playerNode != null;
 
@@ -93,27 +96,25 @@ public class Solver {
 					}
 
 					// Construction of the list of moves from the player node to the correct position to push the crate
-					ArrayList<Direction> movesToPlayerMovementNode = getMoves(searchPath(playerNode, playerMovementNode));
+					ArrayList<Direction> movesToPlayerMovementNode = getMoves(Objects.requireNonNull(searchPath(playerNode, playerMovementNode)));
+					playerMoves.addAll(movesToPlayerMovementNode);
 
 					// If anyTime mode is enabled, moves the player case by case to be able to put the Thread to sleep, else moves it until the end
-					if (!anyTime) {
-						gameController.moveSequence(playerNode.getCase().getPawn(), movesToPlayerMovementNode);
-					} else {
-						for (Direction move : movesToPlayerMovementNode) {
-							gameController.move(playerNode.getCase().getPawn(), move);
-						}
-					}
+					gameController.moveSequence(Objects.requireNonNull(playerNode).getCase().getPawn(), movesToPlayerMovementNode);
 
 					// Getting the new coordinates of the player
 					playerNode = findPlayerNode();
 				}
 
 				// Moves the player following the direction
-				gameController.move(playerNode.getCase().getPawn(), currentDirection);
+				playerMoves.add(currentDirection);
+				gameController.move(Objects.requireNonNull(playerNode).getCase().getPawn(), currentDirection);
 				playerNode = findPlayerNode();
 				nearestCrate = findNearest(playerNode, Type.CRATE, null);
 			}
 		}
+
+		return playerMoves;
 	}
 
 	/**
@@ -134,8 +135,8 @@ public class Solver {
 	 * Method finding the nearest Node corresponding to the type or state entered as parameter from the starting Node
 	 *
 	 * @param startingNode the node from which we are searching
-	 * @param type the type of the node we are searching for
-	 * @param state the state of the node we are searching for
+	 * @param type         the type of the node we are searching for
+	 * @param state        the state of the node we are searching for
 	 * @return the nearest Node corresponding to the type or state entered as parameter from the starting Node
 	 */
 	private Node findNearest(Node startingNode, Type type, State state) {
@@ -171,17 +172,17 @@ public class Solver {
 	private ArrayList<Direction> getMoves(List<Node> path) {
 		ArrayList<Direction> moves = new ArrayList<>();
 
-		for (int ind = 1, pathSize = path.size(); ind < pathSize; ind++) {
-			Case before = path.get(ind - 1).getCase();
-			Case current = path.get(ind).getCase();
+		for (int ind = 0; ind < path.size() - 1; ind++) {
+			Node currentNode = path.get(ind);
+			Node nextNode = path.get(ind + 1);
 
-			if (before.getCoord()[0] > current.getCoord()[0])
-				moves.add(Direction.UP);
-			else if (before.getCoord()[0] < current.getCoord()[0])
+			if (nextNode.getCase().getCoord()[0] > currentNode.getCase().getCoord()[0])
 				moves.add(Direction.DOWN);
-			else if (before.getCoord()[1] < current.getCoord()[1])
+			else if (nextNode.getCase().getCoord()[0] < currentNode.getCase().getCoord()[0])
+				moves.add(Direction.UP);
+			else if (nextNode.getCase().getCoord()[1] > currentNode.getCase().getCoord()[1])
 				moves.add(Direction.RIGHT);
-			else if (before.getCoord()[1] > current.getCoord()[1])
+			else if (nextNode.getCase().getCoord()[1] < currentNode.getCase().getCoord()[1])
 				moves.add(Direction.LEFT);
 		}
 
@@ -192,13 +193,16 @@ public class Solver {
 	 * Method searching the path from startNode to goalNode
 	 *
 	 * @param startNode the node we are going from
-	 * @param goalNode the node we are going to
+	 * @param goalNode  the node we are going to
 	 * @return the list of Node to go through
 	 */
 	private List<Node> searchPath(Node startNode, Node goalNode) {
 		// Resetting the parent node of each node
 		for (Node[] row : nodes)
 			for (Node node : row) node.setParentNode(null);
+
+//		System.out.println("startNode=" + startNode);
+//		System.out.println("goalNode=" + goalNode);
 
 		// The closedList is a list of Node checked
 		ArrayList<Node> closedList = new ArrayList<>();
@@ -238,12 +242,18 @@ public class Solver {
 			openedList.remove(0);
 			closedList.add(current);
 
+//			System.out.println("currentNode=" + current);
+
 			// Setting the neighbors of the current node
-			current.setNeighbors(nodes);
+			if (current.getNeighbors().isEmpty())
+				current.setNeighbors(nodes);
+
+//			System.out.println("Neighbors of currentNode=");
+//			current.getNeighbors().forEach(neighbor -> System.out.println("\t" + neighbor));
 
 			// For each neighbor, if the neighbor node is not valid or is the goal node
 			for (Node neighbor : current.getNeighbors()) {
-				if (neighbor.getCase().getPawn() != null || (startNode.getCase().getPawn().getType() == Type.CRATE && neighbor.isCorner() && neighbor != goalNode) || closedList.contains(neighbor))
+				if (neighbor.getCase().getPawn() != null || (startNode.getCase().getPawn() != null && startNode.getCase().getPawn().getType() == Type.CRATE && neighbor.isCorner() && neighbor != goalNode) || closedList.contains(neighbor))
 					continue;
 
 				// Calculates the distance between the neighbor node and the start node
@@ -261,7 +271,7 @@ public class Solver {
 				int neighborScore = neighborDistanceFromStartNode + neighbor.calcDistanceFromNode(goalNode);
 				fScore.put(neighbor, neighborScore);
 
-				// Resortting the openedList
+				// Resorting the openedList
 				openedList.sort(comparator);
 			}
 		}
@@ -272,11 +282,11 @@ public class Solver {
 	/**
 	 * Construct the path from a node to another.
 	 * <p>
-	 *     What it does is rolling up the parent nodes and adding it to the path.
+	 * What it does is rolling up the parent nodes and adding it to the path.
 	 * </p>
 	 *
 	 * @param start starting node
-	 * @param end ending node
+	 * @param end   ending node
 	 * @return a list of Nodes as path
 	 */
 	private List<Node> constructPath(Node start, Node end) {

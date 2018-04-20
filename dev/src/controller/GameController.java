@@ -35,85 +35,45 @@ public class GameController {
 	 * @return true if the move is done, false if it isn't
 	 */
 	public boolean move(Pawn pawn, Direction direction) {
-		/*  For each direction, we check if the case from that direction isn't a wall, if it isn't, we check if it is
-			a CRATE, if it is we check if there is no obstacle behind it, else we move the pawns.*/
+		if (!isMovable(pawn, direction))
+			return false;
+
 		switch (direction) {
 			case UP:
 				Case up = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0] - 1][pawn.getCase().getCoord()[1]];
 
-				if (up.getPawn() != null && up.getPawn().getType() == Type.CRATE) {
-					Case upCrate = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0] - 2][pawn.getCase().getCoord()[1]];
+				if (up.getPawn() != null)
+					up.getPawn().move(direction);
 
-					if (upCrate.getPawn() != null && upCrate.getPawn().getType() == Type.CRATE) {
-						return false;
-					} else if (this.move(up.getPawn(), Direction.UP)) {
-						pawn.move(Direction.UP);
-						return true;
-					}
-					return false;
-				} else if (up.getState() != State.WALL) {
-					pawn.move(Direction.UP);
-					return true;
-				}
-
-				break;
-			case RIGHT:
-				Case right = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0]][pawn.getCase().getCoord()[1] + 1];
-
-				if (right.getPawn() != null && right.getPawn().getType() == Type.CRATE) {
-					Case rightCrate = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0]][pawn.getCase().getCoord()[1] + 2];
-					if (rightCrate.getPawn() != null && rightCrate.getPawn().getType() == Type.CRATE) {
-						return false;
-					} else if (this.move(right.getPawn(), Direction.RIGHT)) {
-						pawn.move(Direction.RIGHT);
-						return true;
-					}
-					return false;
-				} else if (right.getState() != State.WALL) {
-					pawn.move(Direction.RIGHT);
-					return true;
-				}
-
+				pawn.move(direction);
 				break;
 			case DOWN:
 				Case down = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0] + 1][pawn.getCase().getCoord()[1]];
 
-				if (down.getPawn() != null && down.getPawn().getType() == Type.CRATE) {
-					Case downCrate = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0] + 2][pawn.getCase().getCoord()[1]];
-					if (downCrate.getPawn() != null && downCrate.getPawn().getType() == Type.CRATE) {
-						return false;
-					} else if (this.move(down.getPawn(), Direction.DOWN)) {
-						pawn.move(Direction.DOWN);
-						return true;
-					}
-					return false;
-				} else if (down.getState() != State.WALL) {
-					pawn.move(Direction.DOWN);
-					return true;
-				}
+				if (down.getPawn() != null)
+					down.getPawn().move(direction);
 
+				pawn.move(direction);
 				break;
 			case LEFT:
 				Case left = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0]][pawn.getCase().getCoord()[1] - 1];
 
-				if (left.getPawn() != null && left.getPawn().getType() == Type.CRATE) {
-					Case leftCrate = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0]][pawn.getCase().getCoord()[1] - 2];
-					if (leftCrate.getPawn() != null && leftCrate.getPawn().getType() == Type.CRATE) {
-						return false;
-					} else if (this.move(left.getPawn(), Direction.LEFT)) {
-						pawn.move(Direction.LEFT);
-						return true;
-					}
-					return false;
-				} else if (left.getState() != State.WALL) {
-					pawn.move(Direction.LEFT);
-					return true;
-				}
+				if (left.getPawn() != null)
+					left.getPawn().move(direction);
 
+				pawn.move(direction);
+				break;
+			case RIGHT:
+				Case right = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0]][pawn.getCase().getCoord()[1] + 1];
+
+				if (right.getPawn() != null)
+					right.getPawn().move(direction);
+
+				pawn.move(direction);
 				break;
 		}
 
-		return false;
+		return true;
 	}
 
 	/**
@@ -126,6 +86,63 @@ public class GameController {
 	public void moveSequence(Pawn pawn, ArrayList<Direction> moves) {
 		for (Direction direction : moves)
 			move(pawn, direction);
+	}
+
+	private boolean isMovable(Pawn pawn, Direction direction) {
+		switch (direction) {
+			case UP:
+				Case up = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0] - 1][pawn.getCase().getCoord()[1]];
+
+				if (up.getPawn() != null && up.getPawn().getType() == Type.CRATE) {
+					Case upCrate = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0] - 2][pawn.getCase().getCoord()[1]];
+
+					if (upCrate.getPawn() != null && upCrate.getPawn().getType() == Type.CRATE) {
+						return false;
+					} else
+						return this.isMovable(up.getPawn(), direction);
+				} else
+					return up.getState() != State.WALL;
+
+			case RIGHT:
+				Case right = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0]][pawn.getCase().getCoord()[1] + 1];
+
+				if (right.getPawn() != null && right.getPawn().getType() == Type.CRATE) {
+					Case rightCrate = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0]][pawn.getCase().getCoord()[1] + 2];
+
+					if (rightCrate.getPawn() != null && rightCrate.getPawn().getType() == Type.CRATE) {
+						return false;
+					} else
+						return this.isMovable(right.getPawn(), direction);
+				} else return right.getState() != State.WALL;
+
+			case DOWN:
+				Case down = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0] + 1][pawn.getCase().getCoord()[1]];
+
+				if (down.getPawn() != null && down.getPawn().getType() == Type.CRATE) {
+					Case downCrate = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0] + 2][pawn.getCase().getCoord()[1]];
+
+					if (downCrate.getPawn() != null && downCrate.getPawn().getType() == Type.CRATE) {
+						return false;
+					} else
+						return this.isMovable(down.getPawn(), direction);
+				} else
+					return down.getState() != State.WALL;
+
+			case LEFT:
+				Case left = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0]][pawn.getCase().getCoord()[1] - 1];
+
+				if (left.getPawn() != null && left.getPawn().getType() == Type.CRATE) {
+					Case leftCrate = board.getLevel().getCaseArray()[pawn.getCase().getCoord()[0]][pawn.getCase().getCoord()[1] - 2];
+
+					if (leftCrate.getPawn() != null && leftCrate.getPawn().getType() == Type.CRATE) {
+						return false;
+					} else
+						return this.isMovable(left.getPawn(), direction);
+				} else
+					return left.getState() != State.WALL;
+		}
+
+		return false;
 	}
 
 	/**

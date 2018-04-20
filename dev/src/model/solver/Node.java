@@ -9,7 +9,7 @@ import java.util.ArrayList;
 /**
  * Node's class
  * <p>
- *     A Node represents a node from the grid modelized by the AI. It is affiliated to the Case a the same coordinates.
+ *     A Node represents a node from the grid modeled by the AI. It is affiliated to the Case a the same coordinates.
  * </p>
  *
  * @author GARCIA Romain, DE OLIVEIRA Dylan, NGUYEN Michaël, VINCIGUERRA Antoine
@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * @see Case
  * @see Board
  */
-public class Node {
+class Node {
 	private final Case aCase;
 	private final Board board;
 	private final ArrayList<Node> neighbors;
@@ -38,9 +38,9 @@ public class Node {
 	}
 
 	/**
-	 * Method that calculate the distance from currntNode to the parameter Node.
+	 * Method that calculate the distance from currentNode to the parameter Node.
 	 *
-	 * @param node the node to calculte the distance to
+	 * @param node the node to calculate the distance to
 	 * @return the distance between the two nodes
 	 */
 	int calcDistanceFromNode(Node node) {

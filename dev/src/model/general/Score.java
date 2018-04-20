@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 /**
  * Score's class
  * <p>
- *     The class Score stores all the informations about the actual game.
+ *     The class Score stores all the information about the actual game.
  * </p>
  *
  * @author DE OLIVEIRA Dylan, GARCIA Romain, NGUYEN Michaël, VINCIGUERRA Antoine
@@ -22,7 +22,7 @@ public class Score extends AbstractModel {
 	/**
 	 * Score's constructor that initialize the Score.
 	 */
-	Score(){
+	public Score(){
         stepCount = 0;
     }
 
